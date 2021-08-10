@@ -11,9 +11,9 @@ const db = firebase.database();
 interface Vakancy {
     key: string | null;
     data: {
-        name: String;
-        cost: String;
-        duties: String;
+        name: string;
+        cost: string;
+        duties: string;
     };
 }
 
@@ -41,7 +41,19 @@ export default function Home() {
                 }
             );
         }
-    }, []);
+    }, [vakanciesList]);
+
+    const removeVakancy = (vakancyKey: string | null) => {
+        db.ref(`/vakancies/${vakancyKey}`).remove();
+        setVakanciesList([]);
+    };
+
+    const editVakancy = (vakancy: Vakancy) => {
+        router.push({
+            pathname: '/edit',
+            query: { vakancy: JSON.stringify(vakancy) },
+        });
+    };
 
     return (
         <Box>
@@ -57,7 +69,11 @@ export default function Home() {
                 >
                     Добавить новую вакансию
                 </Button>
-                <VacanciesList vakanciesList={vakanciesList} />
+                <VacanciesList
+                    vakanciesList={vakanciesList}
+                    removeVakancy={removeVakancy}
+                    editVakancy={editVakancy}
+                />
             </Container>
         </Box>
     );

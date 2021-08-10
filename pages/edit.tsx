@@ -2,24 +2,45 @@ import { Box, Button, Container, Input, InputLabel } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
 
 const db = firebase.database();
 
-export default function Add() {
+interface Vakancy {
+    key: string;
+    data: {
+        name: string;
+        cost: string;
+        duties: string;
+    };
+}
+
+export default function Edit() {
     const router = useRouter();
     const classes = useStyles();
 
+    const [key, setKey] = useState('');
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
     const [duties, setDuties] = useState('');
 
-    const addNewVakancy = () => {
-        const vakanciesListRef = db.ref('vakancies');
-        const newVakancyRef = vakanciesListRef.push();
-        newVakancyRef.set({
+    useEffect(() => {
+        if (typeof router.query.vakancy == 'string') {
+            const vakancy: Vakancy = JSON.parse(router.query.vakancy);
+            setKey(vakancy.key ?? '');
+            setName(vakancy.data.name ?? '');
+            setCost(vakancy.data.cost ?? '');
+            setDuties(vakancy.data.duties ?? '');
+        } else {
+            router.push('/');
+        }
+    }, []);
+
+    const editCurVakancy = () => {
+        const curVakancyRef = db.ref(`vakancies/${key}`);
+        curVakancyRef.set({
             name: name,
             cost: cost,
             duties: duties,
@@ -28,6 +49,7 @@ export default function Add() {
     };
 
     const clearStore = () => {
+        setKey('');
         setName('');
         setCost('');
         setDuties('');
@@ -75,24 +97,12 @@ export default function Add() {
                             className={classes.button}
                             onClick={() => {
                                 if (name.length) {
-                                    addNewVakancy();
-                                    router.push('/');
+                                    editCurVakancy();
+                                    router.back();
                                 }
                             }}
                         >
-                            Добавить и вернуться на главную
-                        </Button>
-                        <Button
-                            variant='contained'
-                            color='primary'
-                            className={classes.button}
-                            onClick={() => {
-                                if (name.length) {
-                                    addNewVakancy();
-                                }
-                            }}
-                        >
-                            Добавить и очистить форму
+                            Сохранить и вернуться на главную
                         </Button>
                     </Box>
                 </form>
