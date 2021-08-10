@@ -3,8 +3,14 @@ import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import Cookies from 'universal-cookie';
 import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
+
+const cookies = new Cookies();
+if (cookies.get('isAuth') != 'Y') {
+    cookies.set('isAuth', 'N', { path: '/' });
+}
 
 const db = firebase.database();
 
@@ -27,6 +33,9 @@ export default function Edit() {
     const [duties, setDuties] = useState('');
 
     useEffect(() => {
+        if (cookies.get('isAuth') != 'Y') {
+            router.push('/');
+        }
         if (typeof router.query.vakancy == 'string') {
             const vakancy: Vakancy = JSON.parse(router.query.vakancy);
             setKey(vakancy.key ?? '');
@@ -36,7 +45,7 @@ export default function Edit() {
         } else {
             router.push('/');
         }
-    }, []);
+    }, [router]);
 
     const editCurVakancy = () => {
         const curVakancyRef = db.ref(`vakancies/${key}`);

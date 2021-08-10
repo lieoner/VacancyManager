@@ -1,10 +1,19 @@
-import { Box, Button, Container } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { Avatar, Box, Button, Container, CssBaseline, TextField } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Cookies from 'universal-cookie';
 import Header from '../src/components/header';
 import { VacanciesList } from '../src/components/VacanciesList';
+import { hashCode } from '../src/hashString';
 import { firebase } from '../src/initFirebase';
+
+const cookies = new Cookies();
+if (cookies.get('isAuth') != 'Y') {
+    cookies.set('isAuth', 'N', { path: '/' });
+}
 
 const db = firebase.database();
 
@@ -21,7 +30,14 @@ export default function Home() {
     const router = useRouter();
     const classes = useStyles();
     const [vakanciesList, setVakanciesList] = useState<Vakancy[]>([]);
+    const [isAuth, setIsAuth] = useState(false);
+    const [password, setPassword] = useState('');
     useEffect(() => {
+        if (cookies.get('isAuth') == 'Y') {
+            setIsAuth(true);
+        } else {
+            setIsAuth(false);
+        }
         if (!vakanciesList.length) {
             const vakanciesListRef = db.ref('vakancies');
             vakanciesListRef.on(
@@ -55,6 +71,58 @@ export default function Home() {
         });
     };
 
+    const login = () => {
+        if (hashCode(password).toString() == process.env.NEXT_PUBLIC_PASSWORD_HASH) {
+            cookies.set('isAuth', 'Y', { path: '/' });
+            router.reload();
+        }
+    };
+
+    if (!isAuth) {
+        return (
+            <Box>
+                <Header />
+                <Container component='main' maxWidth='xs'>
+                    <CssBaseline />
+                    <div className={classes.paper}>
+                        <Avatar className={classes.avatar}>
+                            <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component='h1' variant='h5'>
+                            Авторизация
+                        </Typography>
+                        <TextField
+                            variant='outlined'
+                            margin='normal'
+                            required
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            }}
+                            fullWidth
+                            name='password'
+                            label='Пароль'
+                            type='password'
+                            id='password'
+                            autoComplete='current-password'
+                        />
+                    </div>
+                    <Button
+                        onClick={() => {
+                            login();
+                        }}
+                        fullWidth
+                        variant='contained'
+                        color='primary'
+                        className={classes.submit}
+                    >
+                        Войти
+                    </Button>
+                </Container>
+            </Box>
+        );
+    }
+
     return (
         <Box>
             <Header />
@@ -78,11 +146,28 @@ export default function Home() {
         </Box>
     );
 }
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
     createStyles({
         button: {
             marginTop: 30,
             marginBottom: 30,
+        },
+        paper: {
+            marginTop: theme.spacing(8),
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
+        avatar: {
+            margin: theme.spacing(1),
+            backgroundColor: theme.palette.secondary.main,
+        },
+        form: {
+            width: '100%', // Fix IE 11 issue.
+            marginTop: theme.spacing(1),
+        },
+        submit: {
+            margin: theme.spacing(3, 0, 2),
         },
     })
 );

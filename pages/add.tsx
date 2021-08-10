@@ -2,9 +2,15 @@ import { Box, Button, Container, Input, InputLabel } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Cookies from 'universal-cookie';
 import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
+
+const cookies = new Cookies();
+if (cookies.get('isAuth') != 'Y') {
+    cookies.set('isAuth', 'N', { path: '/' });
+}
 
 const db = firebase.database();
 
@@ -15,6 +21,12 @@ export default function Add() {
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
     const [duties, setDuties] = useState('');
+
+    useEffect(() => {
+        if (cookies.get('isAuth') != 'Y') {
+            router.push('/');
+        }
+    }, [router]);
 
     const addNewVakancy = () => {
         const vakanciesListRef = db.ref('vakancies');
