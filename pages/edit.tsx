@@ -57,7 +57,7 @@ export default function Edit() {
 
     return (
         <Box>
-            <Header title={'Добавление вакансии'} />
+            <Header title={'Изменение вакансии'} />
             <Container maxWidth='lg'>
                 <form noValidate autoComplete='off'>
                     <FormControl className={classes.formControl} fullWidth={true}>
