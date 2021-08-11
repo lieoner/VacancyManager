@@ -1,5 +1,5 @@
-This is a [Next.js](https://nextjs.org/) project.
-This application allows you to keep track of vacancies for your organization using firebase realtime database.
+This is a [Next.js](https://nextjs.org/) project with [Material-UI](https://material-ui.com/).
+This application allows you to keep track of vacancies for your organization using [Firebase Realtime Database](https://firebase.google.com/docs/database).
 
 ## Using
 
