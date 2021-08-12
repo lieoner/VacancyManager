@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "export": "npm run build && next export",
-        "hash": "node ./src/hashString.js"
+        "hash": "node ./src/hash.js"
     },
     "dependencies": {
         "@material-ui/core": "^4.12.3",

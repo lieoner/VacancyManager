@@ -8,8 +8,8 @@ import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
 
 const cookies = new Cookies();
-if (cookies.get('isAuth') != 'Y') {
-    cookies.set('isAuth', 'N', { path: '/' });
+if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
+    cookies.set('passwordHash', '', { path: '/' });
 }
 
 const db = firebase.database();
@@ -33,15 +33,18 @@ export default function Edit() {
     const [duties, setDuties] = useState('');
 
     useEffect(() => {
-        if (cookies.get('isAuth') != 'Y') {
+        if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
             router.push('/');
         }
-        if (typeof router.query.vakancy == 'string') {
-            const vakancy: Vakancy = JSON.parse(router.query.vakancy);
-            setKey(vakancy.key ?? '');
-            setName(vakancy.data.name ?? '');
-            setCost(vakancy.data.cost ?? '');
-            setDuties(vakancy.data.duties ?? '');
+        if (typeof router.query.vakancyKey == 'string') {
+            setKey(router.query.vakancyKey ?? '');
+
+            db.ref(`/vakancies/${router.query.vakancyKey}`).once('value', (data) => {
+                console.log(data.val());
+                setName(data.val().name ?? '');
+                setCost(data.val().cost ?? '');
+                setDuties(data.val().duties ?? '');
+            });
         } else {
             router.push('/');
         }
@@ -54,14 +57,6 @@ export default function Edit() {
             cost: cost,
             duties: duties,
         });
-        clearStore();
-    };
-
-    const clearStore = () => {
-        setKey('');
-        setName('');
-        setCost('');
-        setDuties('');
     };
 
     return (

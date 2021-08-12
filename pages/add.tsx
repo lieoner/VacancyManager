@@ -8,8 +8,8 @@ import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
 
 const cookies = new Cookies();
-if (cookies.get('isAuth') != 'Y') {
-    cookies.set('isAuth', 'N', { path: '/' });
+if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
+    cookies.set('passwordHash', '', { path: '/' });
 }
 
 const db = firebase.database();
@@ -23,7 +23,7 @@ export default function Add() {
     const [duties, setDuties] = useState('');
 
     useEffect(() => {
-        if (cookies.get('isAuth') != 'Y') {
+        if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
             router.push('/');
         }
     }, [router]);

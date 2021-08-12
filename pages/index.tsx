@@ -11,8 +11,8 @@ import { hashCode } from '../src/hashString';
 import { firebase } from '../src/initFirebase';
 
 const cookies = new Cookies();
-if (cookies.get('isAuth') != 'Y') {
-    cookies.set('isAuth', 'N', { path: '/' });
+if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
+    cookies.set('passwordHash', '', { path: '/' });
 }
 
 const db = firebase.database();
@@ -33,7 +33,7 @@ export default function Home() {
     const [isAuth, setIsAuth] = useState(false);
     const [password, setPassword] = useState('');
     useEffect(() => {
-        if (cookies.get('isAuth') == 'Y') {
+        if (cookies.get('passwordHash') == process.env.NEXT_PUBLIC_PASSWORD_HASH) {
             setIsAuth(true);
         } else {
             setIsAuth(false);
@@ -67,13 +67,13 @@ export default function Home() {
     const editVakancy = (vakancy: Vakancy) => {
         router.push({
             pathname: '/edit',
-            query: { vakancy: JSON.stringify(vakancy) },
+            query: { vakancyKey: vakancy.key },
         });
     };
 
     const login = () => {
         if (hashCode(password).toString() == process.env.NEXT_PUBLIC_PASSWORD_HASH) {
-            cookies.set('isAuth', 'Y', { path: '/' });
+            cookies.set('passwordHash', process.env.NEXT_PUBLIC_PASSWORD_HASH, { path: '/' });
             router.reload();
         }
     };

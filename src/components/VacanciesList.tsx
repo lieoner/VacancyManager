@@ -150,6 +150,8 @@ const useStyles = makeStyles({
     },
     cardButton: {},
     body: {
+        width: '100%',
+        overflowWrap: 'break-word',
         fontSize: 16,
     },
 });
