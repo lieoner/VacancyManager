@@ -1,11 +1,20 @@
 import { Box, Button, Container, Input, InputLabel } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { ContentState, convertFromHTML, EditorState } from 'draft-js';
+import { stateToHTML } from 'draft-js-export-html';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { EditorProps } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import Cookies from 'universal-cookie';
 import Header from '../src/components/header';
 import { firebase } from '../src/initFirebase';
+
+const Editor = dynamic<EditorProps>(() => import('react-draft-wysiwyg').then((mod) => mod.Editor), {
+    ssr: false,
+});
 
 const cookies = new Cookies();
 if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
@@ -30,7 +39,8 @@ export default function Edit() {
     const [key, setKey] = useState('');
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
-    const [duties, setDuties] = useState('');
+    // const [duties, setDuties] = useState('');
+    const [dutiesState, setDutiesState] = useState(() => EditorState.createEmpty());
 
     useEffect(() => {
         if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
@@ -40,10 +50,14 @@ export default function Edit() {
             setKey(router.query.vakancyKey ?? '');
 
             db.ref(`/vakancies/${router.query.vakancyKey}`).once('value', (data) => {
-                console.log(data.val());
                 setName(data.val().name ?? '');
                 setCost(data.val().cost ?? '');
-                setDuties(data.val().duties ?? '');
+                // setDuties(data.val().duties ?? '');
+                const newDutiesState = ContentState.createFromBlockArray(
+                    convertFromHTML(data.val().duties).contentBlocks,
+                    convertFromHTML(data.val().duties).entityMap
+                );
+                setDutiesState(EditorState.createWithContent(newDutiesState));
             });
         } else {
             router.push('/');
@@ -55,7 +69,7 @@ export default function Edit() {
         curVakancyRef.set({
             name: name,
             cost: cost,
-            duties: duties,
+            duties: stateToHTML(dutiesState.getCurrentContent()),
         });
     };
 
@@ -84,16 +98,27 @@ export default function Edit() {
                             id='cost'
                         />
                     </FormControl>
-                    <FormControl className={classes.formControl} fullWidth={true}>
+                    {/* <FormControl className={classes.formControl} fullWidth={true}>
                         <InputLabel htmlFor='duties'>Обязанности</InputLabel>
                         <Input
-                            value={duties}
+                            multiline={true}
+                            value={duties.replaceAll('<br>', '\n')}
                             onChange={(e) => {
                                 setDuties(e.target.value);
                             }}
                             id='duties'
                         />
                     </FormControl>
+                    */}
+                    <Editor
+                        placeholder={'Обязанности'}
+                        editorState={dutiesState}
+                        toolbarClassName='toolbarClassName'
+                        wrapperClassName='wrapperClassName'
+                        editorClassName='editorClassName'
+                        onEditorStateChange={setDutiesState}
+                    />
+
                     <Box className={classes.btnBox}>
                         <Button
                             variant='contained'

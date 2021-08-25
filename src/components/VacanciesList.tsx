@@ -10,12 +10,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import React, { FC, useState } from 'react';
 
+import Parser from 'html-react-parser';
 interface Vakancy {
     key: string | null;
     data: {
-        name: String;
-        cost: String;
-        duties: String;
+        name: string;
+        cost: string;
+        duties: string;
     };
 }
 interface Props {
@@ -83,7 +84,7 @@ export const VacanciesList: FC<Props> = ({ vakanciesList, removeVakancy, editVak
                                     </Box>
                                 </Box>
                                 <Typography className={classes.body} component='p'>
-                                    {item.data.duties}
+                                    {Parser(item.data.duties)}
                                 </Typography>
                             </CardContent>
                         </CardActionArea>
