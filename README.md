@@ -23,6 +23,9 @@ Before using the application, you need to create a file `.env.local` and add var
 NEXT_PUBLIC_FIREBASE_API_KEY = "YOUR_FIREBASE_API_KEY"
 NEXT_PUBLIC_FIREBASE_PROJECT_ID = "YOUR_FIREBASE_PROJECT_ID"
 NEXT_PUBLIC_PASSWORD_HASH = "PASSWORD_HASH"
+
+NEXT_PUBLIC_FIREBASE_LOGIN = "SERVER_USER_EMAIL" //from https://console.firebase.google.com/u/1/project/*NEXT_PUBLIC_FIREBASE_PROJECT_ID*/authentication/users
+NEXT_PUBLIC_FIREBASE_PASSWORD = "SERVER_USER_PASSWORD"
 ```
 
 You can generate a `PASSWORD_HASH` using the command `yarn hash 'your_password'` or `npm run hash 'your_password'`
