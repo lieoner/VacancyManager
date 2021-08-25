@@ -1,6 +1,18 @@
 This is a [Next.js](https://nextjs.org/) project with [Material-UI](https://material-ui.com/).
 This application allows you to keep track of vacancies for your organization using [Firebase Realtime Database](https://firebase.google.com/docs/database).
 
+## Install
+
+```bash
+yarn
+```
+
+or
+
+```bash
+npm install
+```
+
 ## Using
 
 ```bash
