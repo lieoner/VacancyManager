@@ -17,7 +17,7 @@ npm run build #prepare app for deploy
 npm run export #generate static app for deploy on custom server
 ```
 
-Before using the application, you need to create a file `.env.local` and add variables for connect to the firebase:
+Before using the application, you need to create a file `.env.local` and add variables to connect to the firebase:
 
 ```bash
 NEXT_PUBLIC_FIREBASE_API_KEY = "YOUR_FIREBASE_API_KEY"
