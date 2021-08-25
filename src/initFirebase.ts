@@ -7,11 +7,24 @@ const config = {
     authDomain: `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseapp.com`,
     databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}-default-rtdb.europe-west1.firebasedatabase.app/`,
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    appId: '1:517677598786:web:6f1d17905c271396b505db',
 };
 
 function initFirebase() {
     if (!firebase.apps.length) {
         firebase.initializeApp(config);
+        firebase
+            .auth()
+            .signInWithEmailAndPassword(
+                process.env.NEXT_PUBLIC_FIREBASE_LOGIN as string,
+                process.env.NEXT_PUBLIC_FIREBASE_PASSWORD as string
+            )
+            .then((userCredential) => {
+                // Signed in
+                var user = userCredential.user;
+            });
+
+        firebase.auth();
     }
 }
 initFirebase();
