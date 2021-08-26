@@ -23,15 +23,6 @@ if (cookies.get('passwordHash') != process.env.NEXT_PUBLIC_PASSWORD_HASH) {
 
 const db = firebase.database();
 
-interface Vakancy {
-    key: string;
-    data: {
-        name: string;
-        cost: string;
-        duties: string;
-    };
-}
-
 export default function Edit() {
     const router = useRouter();
     const classes = useStyles();
@@ -39,7 +30,6 @@ export default function Edit() {
     const [key, setKey] = useState('');
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
-    // const [duties, setDuties] = useState('');
     const [dutiesState, setDutiesState] = useState(() => EditorState.createEmpty());
 
     useEffect(() => {
@@ -52,7 +42,6 @@ export default function Edit() {
             db.ref(`/vakancies/${router.query.vakancyKey}`).once('value', (data) => {
                 setName(data.val().name ?? '');
                 setCost(data.val().cost ?? '');
-                // setDuties(data.val().duties ?? '');
                 const newDutiesState = ContentState.createFromBlockArray(
                     convertFromHTML(data.val().duties).contentBlocks,
                     convertFromHTML(data.val().duties).entityMap
@@ -98,18 +87,7 @@ export default function Edit() {
                             id='cost'
                         />
                     </FormControl>
-                    {/* <FormControl className={classes.formControl} fullWidth={true}>
-                        <InputLabel htmlFor='duties'>Обязанности</InputLabel>
-                        <Input
-                            multiline={true}
-                            value={duties.replaceAll('<br>', '\n')}
-                            onChange={(e) => {
-                                setDuties(e.target.value);
-                            }}
-                            id='duties'
-                        />
-                    </FormControl>
-                    */}
+
                     <Editor
                         placeholder={'Обязанности'}
                         editorState={dutiesState}

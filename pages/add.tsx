@@ -27,7 +27,6 @@ export default function Add() {
 
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
-    // const [duties, setDuties] = useState('');
     const [dutiesState, setDutiesState] = useState(() => EditorState.createEmpty());
 
     useEffect(() => {
@@ -50,7 +49,6 @@ export default function Add() {
     const clearStore = () => {
         setName('');
         setCost('');
-        // setDuties('');
     };
 
     return (
@@ -78,18 +76,6 @@ export default function Add() {
                             id='cost'
                         />
                     </FormControl>
-
-                    {/* <FormControl className={classes.formControl} fullWidth={true}>
-                        <InputLabel htmlFor='duties'>Обязанности</InputLabel>
-                        <Input
-                            multiline={true}
-                            value={duties ? duties.replaceAll('<br>', '\n') : duties}
-                            onChange={(e) => {
-                                setDuties(e.target.value);
-                            }}
-                            id='duties'
-                        />
-                    </FormControl> */}
 
                     <Editor
                         placeholder={'Обязанности'}
