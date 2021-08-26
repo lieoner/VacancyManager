@@ -21,8 +21,8 @@ interface Vakancy {
 }
 interface Props {
     vakanciesList: Vakancy[];
-    removeVakancy(arg0: string | null): void;
-    editVakancy(arg0: Vakancy): void;
+    removeVakancy(firebaseItemKey: string | null): void;
+    editVakancy(firebaseItem: Vakancy): void;
 }
 
 export const VacanciesList: FC<Props> = ({ vakanciesList, removeVakancy, editVakancy }) => {
@@ -30,15 +30,15 @@ export const VacanciesList: FC<Props> = ({ vakanciesList, removeVakancy, editVak
 
     const [open, setOpen] = useState(false);
 
-    const [selectedVakancy, setSelectedVakancy] = useState<string | null>('');
+    const [selectedVakancyKey, setSelectedVakancyKey] = useState<string | null>('');
 
     const handleClickOpen = (key: string | null) => {
-        setSelectedVakancy(key);
+        setSelectedVakancyKey(key);
         setOpen(true);
     };
 
     const handleClose = () => {
-        setSelectedVakancy('');
+        setSelectedVakancyKey('');
         setOpen(false);
     };
 
@@ -105,7 +105,7 @@ export const VacanciesList: FC<Props> = ({ vakanciesList, removeVakancy, editVak
                     </Button>
                     <Button
                         onClick={() => {
-                            removeVakancy(selectedVakancy);
+                            removeVakancy(selectedVakancyKey);
                             handleClose();
                         }}
                         color='primary'
